@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en" class="transition-colors duration-500">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Examify - Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Fonts & Tailwind -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#7C3AED",
+                        secondary: "#1F2937",
+                        pageBg: "#DCDCDC",
+                        sectionBg: "#FFFFFF",
+                        cardBg: "#F8FBFF",
+                        accent: "#EDF4FF",
+                        textSecondary: "#6B7280",
+                        danger: "#EF4444"
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(-45deg, #ffffff, #eef2ff, #f5f3ff, #e0f2fe);
+            background-size: 400% 400%;
+            animation: gradientMove 15s ease infinite;
+        }
+
+        .dark body {
+            background: #0F172A;
+        }
+
+        @keyframes gradientMove {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+    </style>
+</head>
+
+<body class="text-secondary dark:text-white min-h-screen flex transition-colors duration-500">
+
+    <!-- Theme Toggle -->
+    <button id="themeToggle"
+        class="fixed top-5 right-5 z-50 px-3 py-1 border border-primary rounded-lg hover:bg-primary hover:text-white transition bg-white/70 dark:bg-slate-800/70 backdrop-blur">
+        🌓
+    </button>
+
+    <!-- Particles -->
+    <div id="tsparticles" class="fixed inset-0 -z-10"></div>
+
+    <!-- Sidebar -->
+    <div
+        class="w-64 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl shadow-2xl rounded-2xl flex flex-col p-6 border border-purple-100 dark:border-slate-700 transition-colors duration-500">
+
+        <!-- Logo / Brand -->
+        <h2 class="text-3xl font-extrabold mb-10 text-primary dark:text-white tracking-tight">Examify</h2>
+
+        <!-- Navigation -->
+        <nav class="flex flex-col gap-4 text-lg">
+            <a href="#profile"
+                class="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-primary/10 dark:hover:bg-white/10 transition-colors duration-300 text-gray-800 dark:text-gray-200">
+                <span>Profile</span>
+            </a>
+
+            <a href="#exams"
+                class="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-primary/10 dark:hover:bg-white/10 transition-colors duration-300 text-gray-800 dark:text-gray-200">
+                <span>Exams</span>
+            </a>
+
+            <a href="#stats"
+                class="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-primary/10 dark:hover:bg-white/10 transition-colors duration-300 text-gray-800 dark:text-gray-200">
+                <span>Stats</span>
+            </a>
+
+            <!-- Logout Button -->
+            <button id="logoutBtn" class="mt-6 py-2 px-6 bg-gradient-to-r from-red-100 via-red-200 to-red-100/80 
+                   text-red-700 font-medium rounded-full flex items-center space-x-2 
+                   hover:from-red-200 hover:via-red-300 hover:to-red-200 shadow-lg backdrop-blur-sm 
+                   transition-all duration-300 dark:from-red-700/30 dark:via-red-700/40 dark:to-red-700/30 
+                   dark:text-red-100 dark:hover:from-red-700/50 dark:hover:via-red-700/60 dark:hover:to-red-700/50">
+                <!-- Logout Icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1" />
+                </svg>
+                <span>Logout</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 p-10 overflow-y-auto">
+
+        <!-- Welcome -->
+        <h1 id="welcomeMessage" class="text-4xl font-extrabold mb-8 text-primary dark:text-slate-100 ">Welcome 👋</h1>
+
+        <!-- Profile Card -->
+        <section id="profile" class="mb-12">
+            <div
+                class="bg-cardBg dark:bg-slate-800/80 backdrop-blur-xl p-8 rounded-3xl shadow-lg max-w-md border border-gray-200 dark:border-slate-700 hover:shadow-xl transition-colors duration-500">
+                <h2 class="text-2xl font-bold mb-4 text-secondary dark:text-white">Profile</h2>
+                <p class="mb-1"><span class="font-semibold">Name:</span> <span id="profileName"></span></p>
+                <p class="mb-1"><span class="font-semibold">Email:</span> <span id="profileEmail"></span></p>
+                <p><span class="font-semibold">Last Exam Score:</span> <span id="lastScore">N/A</span></p>
+            </div>
+        </section>
+
+        <!-- Exams Section -->
+        <section id="exams" class="mb-12">
+            <h2 class="text-3xl font-bold mb-6 text-secondary dark:text-white">Available Exams</h2>
+            <div class="grid md:grid-cols-3 gap-8" id="examCards">
+                <!-- Dynamic exam cards inserted here -->
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section id="stats">
+            <h2 class="text-3xl font-bold mb-6 text-secondary dark:text-white">Stats</h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div
+                    class="bg-cardBg dark:bg-slate-800/80 backdrop-blur-xl p-8 rounded-3xl shadow-lg text-center border border-gray-200 dark:border-slate-700 hover:shadow-xl transition-colors duration-500">
+                    <p class="text-2xl font-bold text-primary mb-2" id="totalAttempts">0</p>
+                    <p class="text-textSecondary dark:text-slate-300 uppercase tracking-wide text-sm">Total Attempts</p>
+                </div>
+                <div
+                    class="bg-cardBg dark:bg-slate-800/80 backdrop-blur-xl p-8 rounded-3xl shadow-lg text-center border border-gray-200 dark:border-slate-700 hover:shadow-xl transition-colors duration-500">
+                    <p class="text-2xl font-bold text-primary mb-2" id="highestScore">0</p>
+                    <p class="text-textSecondary dark:text-slate-300 uppercase tracking-wide text-sm">Highest Score</p>
+                </div>
+                <div
+                    class="bg-cardBg dark:bg-slate-800/80 backdrop-blur-xl p-8 rounded-3xl shadow-lg text-center border border-gray-200 dark:border-slate-700 hover:shadow-xl transition-colors duration-500">
+                    <p class="text-2xl font-bold text-primary mb-2" id="averageScore">0</p>
+                    <p class="text-textSecondary dark:text-slate-300 uppercase tracking-wide text-sm">Average Score</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // ===============================
+        // Apply Saved Theme
+        // ===============================
+        const savedTheme = localStorage.getItem("theme");
+        if (savedTheme === "dark") {
+            document.documentElement.classList.add("dark");
+        }
+
+        const toggleTheme = () => {
+            const isDark = document.documentElement.classList.toggle("dark");
+            localStorage.setItem("theme", isDark ? "dark" : "light");
+        };
+        document.getElementById("themeToggle").addEventListener("click", toggleTheme);
+
+        // ===============================
+        // Particles
+        // ===============================
+
+        const getParticleCount = () => window.innerWidth < 768 ? 15 : 40;
+
+        let particleInstance;
+
+        tsParticles.load("tsparticles", {
+            particles: {
+                number: { value: getParticleCount() },
+                color: { value: "#7C3AED" },
+                links: { enable: true, color: "#7C3AED", opacity: 0.2 },
+                move: { enable: true, speed: 0.5 },
+                size: { value: 2 }
+            }
+        }).then(container => {
+            particleInstance = container;
+        });
+
+        // Update particles on resize
+        window.addEventListener("resize", () => {
+            if (!particleInstance) return;
+
+            const newCount = getParticleCount();
+            particleInstance.options.particles.number.value = newCount;
+            particleInstance.refresh();
+        });
+
+        // ===== Route Guard =====
+        const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+        if (!currentUser) window.location.replace("login.html");
+
+        // Welcome & Profile
+        document.getElementById("welcomeMessage").textContent = `Welcome, ${currentUser.firstName} 👋`;
+        document.getElementById("profileName").textContent = `${currentUser.firstName} ${currentUser.lastName}`;
+        document.getElementById("profileEmail").textContent = currentUser.email;
+
+        // Last Exam Score & Stats
+        currentUser.exams = currentUser.exams || [];
+        document.getElementById("lastScore").textContent = currentUser.exams.length
+            ? `${currentUser.exams[currentUser.exams.length - 1].score}%`
+            : "N/A";
+
+        const totalAttempts = currentUser.exams.length;
+        const highestScore = totalAttempts ? Math.max(...currentUser.exams.map(e => e.score)) : 0;
+        const averageScore = totalAttempts ? Math.round(currentUser.exams.reduce((a, b) => a + b.score, 0) / totalAttempts) : 0;
+
+        document.getElementById("totalAttempts").textContent = totalAttempts;
+        document.getElementById("highestScore").textContent = highestScore;
+        document.getElementById("averageScore").textContent = averageScore;
+
+        // ===== Exams Data =====
+        const availableExams = [
+            {
+                title: "Mathematics Fundamentals",
+                duration: 1, // minutes
+                difficulty: "Easy",
+                questions: [
+                    { text: "2 + 2 = ?", answers: [{ text: "3", isCorrect: false }, { text: "4", isCorrect: true }, { text: "5", isCorrect: false }, { text: "6", isCorrect: false }] },
+                    { text: "5 × 3 = ?", answers: [{ text: "15", isCorrect: true }, { text: "10", isCorrect: false }, { text: "20", isCorrect: false }, { text: "8", isCorrect: false }] },
+                    { text: "10 ÷ 2 = ?", answers: [{ text: "2", isCorrect: false }, { text: "5", isCorrect: true }, { text: "10", isCorrect: false }, { text: "8", isCorrect: false }] },
+                    { text: "7 + 6 = ?", answers: [{ text: "11", isCorrect: false }, { text: "13", isCorrect: true }, { text: "12", isCorrect: false }, { text: "14", isCorrect: false }] },
+                    { text: "9 - 4 = ?", answers: [{ text: "6", isCorrect: false }, { text: "5", isCorrect: true }, { text: "4", isCorrect: false }, { text: "3", isCorrect: false }] },
+                    { text: "3² = ?", answers: [{ text: "6", isCorrect: false }, { text: "9", isCorrect: true }, { text: "12", isCorrect: false }, { text: "3", isCorrect: false }] },
+                    { text: "12 + 8 = ?", answers: [{ text: "18", isCorrect: false }, { text: "20", isCorrect: true }, { text: "22", isCorrect: false }, { text: "24", isCorrect: false }] },
+                    { text: "15 - 7 = ?", answers: [{ text: "9", isCorrect: false }, { text: "8", isCorrect: true }, { text: "7", isCorrect: false }, { text: "6", isCorrect: false }] },
+                    { text: "6 × 4 = ?", answers: [{ text: "24", isCorrect: true }, { text: "20", isCorrect: false }, { text: "26", isCorrect: false }, { text: "18", isCorrect: false }] },
+                    { text: "100 ÷ 10 = ?", answers: [{ text: "5", isCorrect: false }, { text: "10", isCorrect: true }, { text: "20", isCorrect: false }, { text: "15", isCorrect: false }] }
+                ]
+            },
+            {
+                title: "General Science",
+                duration: 25,
+                difficulty: "Medium",
+                questions: [
+                    { text: "H2O is ?", answers: [{ text: "Oxygen", isCorrect: false }, { text: "Water", isCorrect: true }, { text: "Hydrogen", isCorrect: false }, { text: "Helium", isCorrect: false }] },
+                    { text: "Planet known as Red Planet?", answers: [{ text: "Earth", isCorrect: false }, { text: "Mars", isCorrect: true }, { text: "Jupiter", isCorrect: false }, { text: "Saturn", isCorrect: false }] },
+                    { text: "Gas plants absorb?", answers: [{ text: "Oxygen", isCorrect: false }, { text: "Carbon Dioxide", isCorrect: true }, { text: "Nitrogen", isCorrect: false }, { text: "Hydrogen", isCorrect: false }] },
+                    { text: "Human heart has how many chambers?", answers: [{ text: "2", isCorrect: false }, { text: "4", isCorrect: true }, { text: "3", isCorrect: false }, { text: "5", isCorrect: false }] },
+                    { text: "Boiling point of water?", answers: [{ text: "90°C", isCorrect: false }, { text: "100°C", isCorrect: true }, { text: "120°C", isCorrect: false }, { text: "80°C", isCorrect: false }] },
+                    { text: "Largest planet?", answers: [{ text: "Earth", isCorrect: false }, { text: "Jupiter", isCorrect: true }, { text: "Mars", isCorrect: false }, { text: "Venus", isCorrect: false }] },
+                    { text: "Chemical symbol of Gold?", answers: [{ text: "Au", isCorrect: true }, { text: "Ag", isCorrect: false }, { text: "Gd", isCorrect: false }, { text: "Go", isCorrect: false }] },
+                    { text: "Energy from sun is called?", answers: [{ text: "Solar Energy", isCorrect: true }, { text: "Wind Energy", isCorrect: false }, { text: "Hydro Energy", isCorrect: false }, { text: "Thermal Energy", isCorrect: false }] },
+                    { text: "Speed of light is approx?", answers: [{ text: "300,000 km/s", isCorrect: true }, { text: "150,000 km/s", isCorrect: false }, { text: "1,000 km/s", isCorrect: false }, { text: "500,000 km/s", isCorrect: false }] },
+                    { text: "Main gas in Earth's atmosphere?", answers: [{ text: "Oxygen", isCorrect: false }, { text: "Nitrogen", isCorrect: true }, { text: "CO2", isCorrect: false }, { text: "Hydrogen", isCorrect: false }] }
+                ]
+            },
+            {
+                title: "World History",
+                duration: 30,
+                difficulty: "Hard",
+                questions: [
+                    { text: "Who discovered America?", answers: [{ text: "Columbus", isCorrect: true }, { text: "Newton", isCorrect: false }, { text: "Einstein", isCorrect: false }, { text: "Tesla", isCorrect: false }] },
+                    { text: "World War II ended in?", answers: [{ text: "1945", isCorrect: true }, { text: "1939", isCorrect: false }, { text: "1918", isCorrect: false }, { text: "1950", isCorrect: false }] },
+                    { text: "First President of USA?", answers: [{ text: "Washington", isCorrect: true }, { text: "Lincoln", isCorrect: false }, { text: "Jefferson", isCorrect: false }, { text: "Adams", isCorrect: false }] },
+                    { text: "Great Wall is in?", answers: [{ text: "India", isCorrect: false }, { text: "China", isCorrect: true }, { text: "Japan", isCorrect: false }, { text: "Egypt", isCorrect: false }] },
+                    { text: "Ancient pyramids are in?", answers: [{ text: "Greece", isCorrect: false }, { text: "Egypt", isCorrect: true }, { text: "Mexico", isCorrect: false }, { text: "Peru", isCorrect: false }] },
+                    { text: "Roman Empire capital?", answers: [{ text: "Rome", isCorrect: true }, { text: "Paris", isCorrect: false }, { text: "London", isCorrect: false }, { text: "Berlin", isCorrect: false }] },
+                    { text: "Cold War was between USA and?", answers: [{ text: "China", isCorrect: false }, { text: "USSR", isCorrect: true }, { text: "Germany", isCorrect: false }, { text: "France", isCorrect: false }] },
+                    { text: "French Revolution year?", answers: [{ text: "1789", isCorrect: true }, { text: "1804", isCorrect: false }, { text: "1776", isCorrect: false }, { text: "1812", isCorrect: false }] },
+                    { text: "Industrial Revolution began in?", answers: [{ text: "USA", isCorrect: false }, { text: "Britain", isCorrect: true }, { text: "France", isCorrect: false }, { text: "Germany", isCorrect: false }] },
+                    { text: "Berlin Wall fell in?", answers: [{ text: "1989", isCorrect: true }, { text: "1991", isCorrect: false }, { text: "1975", isCorrect: false }, { text: "1965", isCorrect: false }] }
+                ]
+            },
+            {
+                title: "Programming Fundamentals",
+                duration: 30,
+                difficulty: "Medium",
+                questions: [
+                    { text: "Which language runs in the browser?", answers: [{ text: "Python", isCorrect: false }, { text: "Java", isCorrect: false }, { text: "C++", isCorrect: false }, { text: "JavaScript", isCorrect: true }] },
+                    { text: "HTML stands for?", answers: [{ text: "Hyper Trainer Marking Language", isCorrect: false }, { text: "Hyper Text Markup Language", isCorrect: true }, { text: "High Text Machine Language", isCorrect: false }, { text: "Hyper Tool Multi Language", isCorrect: false }] },
+                    { text: "CSS is used for?", answers: [{ text: "Styling", isCorrect: true }, { text: "Database", isCorrect: false }, { text: "Server Logic", isCorrect: false }, { text: "Encryption", isCorrect: false }] },
+                    { text: "Which symbol is used for comments in JavaScript?", answers: [{ text: "//", isCorrect: true }, { text: "#", isCorrect: false }, { text: "<!-- -->", isCorrect: false }, { text: "**", isCorrect: false }] },
+                    { text: "Which keyword declares a variable in JS?", answers: [{ text: "int", isCorrect: false }, { text: "var", isCorrect: true }, { text: "define", isCorrect: false }, { text: "dim", isCorrect: false }] },
+                    { text: "Which data type is TRUE or FALSE?", answers: [{ text: "String", isCorrect: false }, { text: "Boolean", isCorrect: true }, { text: "Number", isCorrect: false }, { text: "Array", isCorrect: false }] },
+                    { text: "Which HTML tag creates a link?", answers: [{ text: "<a>", isCorrect: true }, { text: "<link>", isCorrect: false }, { text: "<href>", isCorrect: false }, { text: "<url>", isCorrect: false }] },
+                    { text: "Which method converts JSON to object?", answers: [{ text: "JSON.parse()", isCorrect: true }, { text: "JSON.stringify()", isCorrect: false }, { text: "JSON.object()", isCorrect: false }, { text: "JSON.convert()", isCorrect: false }] },
+                    { text: "Which operator checks equality with type?", answers: [{ text: "==", isCorrect: false }, { text: "=", isCorrect: false }, { text: "===", isCorrect: true }, { text: "!=", isCorrect: false }] },
+                    { text: "Which loop repeats until condition is false?", answers: [{ text: "for", isCorrect: false }, { text: "while", isCorrect: true }, { text: "if", isCorrect: false }, { text: "switch", isCorrect: false }] }
+                ]
+            }, {
+                title: "English Grammar Test",
+                duration: 20,
+                difficulty: "Easy",
+                questions: [
+                    { text: "Choose correct sentence:", answers: [{ text: "She go to school.", isCorrect: false }, { text: "She goes to school.", isCorrect: true }, { text: "She going school.", isCorrect: false }, { text: "She gone school.", isCorrect: false }] },
+                    { text: "Past tense of 'run'?", answers: [{ text: "runned", isCorrect: false }, { text: "ran", isCorrect: true }, { text: "running", isCorrect: false }, { text: "runs", isCorrect: false }] },
+                    { text: "Plural of 'child'?", answers: [{ text: "childs", isCorrect: false }, { text: "children", isCorrect: true }, { text: "childes", isCorrect: false }, { text: "childrens", isCorrect: false }] },
+                    { text: "Opposite of 'big'?", answers: [{ text: "large", isCorrect: false }, { text: "huge", isCorrect: false }, { text: "small", isCorrect: true }, { text: "tall", isCorrect: false }] },
+                    { text: "Correct article: ___ apple", answers: [{ text: "a", isCorrect: false }, { text: "an", isCorrect: true }, { text: "the", isCorrect: false }, { text: "no article", isCorrect: false }] },
+                    { text: "Synonym of 'fast'?", answers: [{ text: "quick", isCorrect: true }, { text: "slow", isCorrect: false }, { text: "lazy", isCorrect: false }, { text: "weak", isCorrect: false }] },
+                    { text: "He ___ playing football.", answers: [{ text: "is", isCorrect: true }, { text: "are", isCorrect: false }, { text: "am", isCorrect: false }, { text: "be", isCorrect: false }] },
+                    { text: "Correct spelling:", answers: [{ text: "Recieve", isCorrect: false }, { text: "Receive", isCorrect: true }, { text: "Receeve", isCorrect: false }, { text: "Recive", isCorrect: false }] },
+                    { text: "Choose adjective:", answers: [{ text: "Quickly", isCorrect: false }, { text: "Beautiful", isCorrect: true }, { text: "Run", isCorrect: false }, { text: "Speak", isCorrect: false }] },
+                    { text: "Future tense of 'eat'?", answers: [{ text: "ate", isCorrect: false }, { text: "will eat", isCorrect: true }, { text: "eating", isCorrect: false }, { text: "eats", isCorrect: false }] }
+                ]
+            }, {
+                title: "Logical Reasoning & IQ",
+                duration: 35,
+                difficulty: "Hard",
+                questions: [
+                    { text: "Next number: 2, 4, 8, 16, ?", answers: [{ text: "18", isCorrect: false }, { text: "24", isCorrect: false }, { text: "32", isCorrect: true }, { text: "20", isCorrect: false }] },
+                    { text: "If ALL = 12, BALL = ?", answers: [{ text: "14", isCorrect: false }, { text: "24", isCorrect: true }, { text: "16", isCorrect: false }, { text: "20", isCorrect: false }] },
+                    { text: "Odd one out: Dog, Cat, Tiger, Car", answers: [{ text: "Dog", isCorrect: false }, { text: "Cat", isCorrect: false }, { text: "Tiger", isCorrect: false }, { text: "Car", isCorrect: true }] },
+                    { text: "5 + 3 × 2 = ?", answers: [{ text: "16", isCorrect: false }, { text: "11", isCorrect: true }, { text: "13", isCorrect: false }, { text: "10", isCorrect: false }] },
+                    { text: "Mirror of 3 is?", answers: [{ text: "Ɛ", isCorrect: true }, { text: "8", isCorrect: false }, { text: "M", isCorrect: false }, { text: "W", isCorrect: false }] },
+                    { text: "If A=1, B=2, C=3, then CAB = ?", answers: [{ text: "312", isCorrect: true }, { text: "123", isCorrect: false }, { text: "213", isCorrect: false }, { text: "231", isCorrect: false }] },
+                    { text: "Next: 1, 1, 2, 3, 5, ?", answers: [{ text: "7", isCorrect: false }, { text: "8", isCorrect: true }, { text: "6", isCorrect: false }, { text: "9", isCorrect: false }] },
+                    { text: "Water is to Thirst as Food is to ?", answers: [{ text: "Eat", isCorrect: false }, { text: "Hunger", isCorrect: true }, { text: "Drink", isCorrect: false }, { text: "Taste", isCorrect: false }] },
+                    { text: "Square root of 144?", answers: [{ text: "10", isCorrect: false }, { text: "11", isCorrect: false }, { text: "12", isCorrect: true }, { text: "14", isCorrect: false }] },
+                    { text: "If 3x = 15, x = ?", answers: [{ text: "3", isCorrect: false }, { text: "5", isCorrect: true }, { text: "4", isCorrect: false }, { text: "6", isCorrect: false }] }
+                ]
+            }
+        ];
+
+        // ===== Render Exam Cards =====
+        const examContainer = document.getElementById("examCards");
+        examContainer.innerHTML = "";
+
+        availableExams.forEach(exam => {
+            const card = document.createElement("div");
+            card.className = "bg-cardBg dark:bg-slate-800/80 backdrop-blur-xl p-6 rounded-3xl shadow-lg flex flex-col justify-between border border-gray-200 dark:border-slate-700 hover:shadow-xl hover:scale-105 transition transform";
+
+            card.innerHTML = `
+        <h3 class="text-xl font-bold mb-3 text-secondary dark:text-white">${exam.title}</h3>
+        <p class="mb-1"><span class="font-semibold">Duration:</span> ${exam.duration} min</p>
+        <p class="mb-1"><span class="font-semibold">Questions:</span> ${exam.questions.length}</p>
+        <p class="mb-3 flex items-center gap-2">
+          <span class="font-semibold">Difficulty:</span> 
+          <span class="${exam.difficulty === 'Easy'
+                    ? 'bg-green-100 text-green-700 dark:bg-green-700/20 dark:text-green-200'
+                    : exam.difficulty === 'Medium'
+                        ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-700/20 dark:text-yellow-200'
+                        : 'bg-red-100 text-red-700 dark:bg-red-700/20 dark:text-red-200'
+                } px-3 py-1 rounded-full text-sm font-semibold">
+               ${exam.difficulty}
+            </span>
+        </p>
+        <button class="mt-auto py-2 px-4 bg-primary text-white rounded-lg hover:opacity-90 transition">
+            Start
+        </button>
+                   `;
+
+            const btn = card.querySelector("button");
+            btn.addEventListener("click", () => {
+                localStorage.setItem("currentExam", JSON.stringify(exam));
+                window.location.href = "exam-instructions.html";
+            });
+
+            examContainer.appendChild(card);
+        });
+
+        // ===== Logout =====
+        document.getElementById("logoutBtn").addEventListener("click", () => {
+            localStorage.removeItem("currentUser");
+            window.location.replace("login.html");
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en" class="transition-colors duration-500">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Examify - Time Expired</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Fonts & Tailwind -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#7C3AED",
+                        success: "#22C55E",
+                        danger: "#EF4444",
+                        warning: "#FACC15"
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(-45deg, #ffffff, #eef2ff, #f5f3ff, #e0f2fe);
+            background-size: 400% 400%;
+            animation: gradientMove 15s ease infinite;
+            overflow-x: hidden;
+            transition: background 0.5s;
+        }
+
+        .dark body {
+            background: #0F172A;
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .card {
+            transition: transform .3s ease, box-shadow .3s ease;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 20px 40px rgba(124, 58, 237, 0.3);
+        }
+
+        .glow-btn {
+            box-shadow: 0 10px 25px rgba(124, 58, 237, 0.3);
+            transition: all 0.3s ease;
+            animation: pulse-btn 2s infinite;
+        }
+
+        .glow-btn:hover {
+            box-shadow: 0 20px 40px rgba(124, 58, 237, 0.5);
+            transform: translateY(-3px);
+        }
+
+        @keyframes pulse-btn {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+    </style>
+</head>
+
+<body class="text-slate-800 dark:text-white flex items-center justify-center min-h-screen relative">
+
+    <!-- Particle Background -->
+    <div id="tsparticles" class="fixed inset-0 -z-10"></div>
+
+    <!-- Timeout Card -->
+    <div class="card bg-white dark:bg-[#1A202E]/60 backdrop-blur-md shadow-2xl dark:shadow-none rounded-3xl p-10 max-w-2xl w-full text-center">
+
+        <!-- Animated Header -->
+        <h1 id="timeoutMessage" class="text-3xl font-bold text-danger mb-4 animate-pulse"></h1>
+
+        <p class="text-gray-500 dark:text-slate-300 mb-6">Your exam was automatically submitted.</p>
+
+        <!-- Performance Bar -->
+        <div class="mb-6">
+            <div class="w-full bg-gray-300 dark:bg-slate-700 rounded-full h-6 overflow-hidden">
+                <div id="performanceBar" class="h-6 rounded-full transition-all duration-1000 ease-out"></div>
+            </div>
+        </div>
+
+        <!-- Partial Results -->
+        <div class="grid grid-cols-3 gap-4 text-center mb-6">
+            <div class="bg-green-100 dark:bg-green-800/40 p-4 rounded-xl">
+                <p class="text-lg font-bold text-success" id="correctCount"></p>
+                <p>Correct</p>
+            </div>
+            <div class="bg-red-100 dark:bg-red-800/40 p-4 rounded-xl">
+                <p class="text-lg font-bold text-danger" id="wrongCount"></p>
+                <p>Wrong</p>
+            </div>
+            <div class="bg-yellow-100 dark:bg-yellow-800/40 p-4 rounded-xl">
+                <p class="text-lg font-bold text-warning" id="unansweredCount"></p>
+                <p>Unanswered</p>
+            </div>
+        </div>
+
+        <!-- Final Score -->
+        <h2 id="finalScore" class="text-xl font-semibold mb-6"></h2>
+
+        <!-- Back Button -->
+        <button id="dashboardBtn" class="px-6 py-2 bg-primary text-white rounded-lg glow-btn hover:bg-purple-700 transition">
+            Back to Dashboard
+        </button>
+
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Particle Background
+            const getParticleCount = () => window.innerWidth < 768 ? 15 : 40;
+            let particleInstance;
+
+            tsParticles.load("tsparticles", {
+                particles: {
+                    number: { value: getParticleCount() },
+                    color: { value: "#7C3AED" },
+                    links: { enable: true, color: "#7C3AED", opacity: 0.2 },
+                    move: { enable: true, speed: 0.5 },
+                    size: { value: 2 }
+                }
+            }).then(container => { particleInstance = container; });
+
+            window.addEventListener("resize", () => {
+                if (!particleInstance) return;
+                particleInstance.options.particles.number.value = getParticleCount();
+                particleInstance.refresh();
+            });
+
+            const resultData = JSON.parse(localStorage.getItem("examResult"));
+            if (!resultData || !resultData.timedOut) window.location.replace("dashboard.html");
+
+            const { user, correct, wrong, unanswered, scorePercent } = resultData;
+
+            // Save result to currentUser
+            let currentUser = JSON.parse(localStorage.getItem("currentUser"));
+            if (currentUser) {
+                currentUser.exams = currentUser.exams || [];
+                currentUser.exams.push({ score: scorePercent, date: new Date().toISOString() });
+                localStorage.setItem("currentUser", JSON.stringify(currentUser));
+            }
+            localStorage.removeItem("examResult");
+
+            // Personalized timeout message
+            document.getElementById("timeoutMessage").textContent = `Time has expired, ${user.firstName} ${user.lastName}.`;
+
+            // Counts
+            document.getElementById("correctCount").textContent = correct;
+            document.getElementById("wrongCount").textContent = wrong;
+            document.getElementById("unansweredCount").textContent = unanswered;
+
+            // Final Score
+            document.getElementById("finalScore").textContent = `Your Score: ${scorePercent}%`;
+
+            // Performance Bar
+            const performanceBar = document.getElementById("performanceBar");
+            performanceBar.style.width = scorePercent + "%";
+            if (scorePercent >= 75) performanceBar.classList.add("bg-green-500");
+            else if (scorePercent >= 50) performanceBar.classList.add("bg-yellow-400");
+            else performanceBar.classList.add("bg-red-500");
+
+            // Back button
+            document.getElementById("dashboardBtn").addEventListener("click", () => {
+                window.location.replace("dashboard.html");
+            });
+
+            // Prevent back navigation
+            function preventBack() { window.history.forward(); }
+            setTimeout(preventBack, 0);
+            window.onunload = function () { null };
+        });
+
+        // Apply saved theme
+        const savedTheme = localStorage.getItem("theme");
+        if (savedTheme === "dark") document.documentElement.classList.add("dark");
+    </script>
+
+</body>
+
+</html>

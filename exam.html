@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en" class="transition-colors duration-500">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Examify - Exam</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Fonts & Tailwind -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#7C3AED",
+                        secondary: "#1F2937",
+                        pageBg: "#DCDCDC",
+                        sectionBg: "#FFFFFF",
+                        cardBg: "#F8FBFF",
+                        accent: "#EDF4FF",
+                        textSecondary: "#6B7280",
+                        danger: "#EF4444",
+                        answered: "#34D399",
+                        marked: "#FBBF24",
+                        notvisited: "#D1D5DB"
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(-45deg, #ffffff, #eef2ff, #f5f3ff, #e0f2fe);
+            background-size: 400% 400%;
+            animation: gradientMove 15s ease infinite;
+        }
+
+        .dark body {
+            background: #0F172A;
+        }
+
+        @keyframes gradientMove {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        @keyframes stripes {
+            from {
+                background-position: 0 0;
+            }
+
+            to {
+                background-position: 40px 0;
+            }
+        }
+
+        .animate-stripes {
+            animation: stripes 1s linear infinite;
+        }
+
+        @keyframes pulseGlow {
+            0% {
+                box-shadow: 0 0 0px rgba(34, 197, 94, 0.7);
+            }
+
+            50% {
+                box-shadow: 0 0 20px rgba(34, 197, 94, 0.9);
+            }
+
+            100% {
+                box-shadow: 0 0 0px rgba(34, 197, 94, 0.7);
+            }
+        }
+
+        .pulse-glow {
+            animation: pulseGlow 1s ease-in-out 2;
+        }
+    </style>
+</head>
+
+<body class="text-secondary dark:text-white font-sans min-h-screen flex flex-col transition-colors duration-500">
+
+
+
+    <!-- Particles Background -->
+    <div id="tsparticles" class="fixed inset-0 -z-10"></div>
+
+    <!-- Header -->
+    <header
+        class="bg-cardBg dark:bg-slate-800/80 backdrop-blur-xl p-4 shadow-md flex justify-between items-center border-b border-gray-200 dark:border-slate-700 transition-colors duration-500">
+        <div>
+            <h1 class="text-xl font-bold text-primary dark:text-slate-100"> <span id="userName">Student</span></h1>
+        </div>
+        <div class="flex items-center space-x-4">
+            <div class="text-textSecondary dark:text-slate-300 font-semibold">
+                Time Remaining: <span id="timer">00:00</span>
+            </div>
+            <div class="flex items-center space-x-2">
+                <div class="w-72 bg-gray-200 dark:bg-slate-700 rounded-full h-6 overflow-hidden relative shadow-inner">
+                    <div id="progressBar"
+                        class="h-6 w-0 rounded-full flex items-center justify-center text-xs font-bold text-white transition-all duration-500 ease-out relative overflow-hidden">
+                        <span id="progressText" class="relative z-10">0%</span>
+                        <div
+                            class="absolute inset-0 opacity-30 bg-[linear-gradient(45deg,rgba(255,255,255,0.2)_25%,transparent_25%,transparent_50%,rgba(255,255,255,0.2)_50%,rgba(255,255,255,0.2)_75%,transparent_75%,transparent)] bg-[length:20px_20px] animate-stripes">
+                        </div>
+                    </div>
+                </div>
+                <!-- Theme Toggle beside Progress Bar -->
+                <button id="themeToggle"
+                    class="px-3 py-1 border border-primary rounded-lg hover:bg-primary hover:text-white transition bg-white/70 dark:bg-slate-800/70 backdrop-blur">
+                    🌓
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Exam Layout -->
+    <div class="flex flex-1 overflow-hidden">
+
+        <!-- Sidebar -->
+        <aside
+            class="w-24 bg-sectionBg dark:bg-slate-900/80 backdrop-blur-xl border-r border-gray-200 dark:border-slate-700 p-4 overflow-y-auto transition-colors duration-500">
+            <div id="questionNav" class="flex flex-col space-y-2"></div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-6 overflow-y-auto flex flex-col">
+            <div id="questionContainer"
+                class="bg-cardBg dark:bg-slate-800/80 backdrop-blur-xl p-6 rounded-2xl shadow-lg mb-4 flex-1 flex flex-col justify-between transition-colors duration-500">
+                <div>
+                    <h2 id="questionText" class="text-xl font-bold text-primary dark:text-slate-100  mb-4">Question Text</h2>
+                    <ul id="answerOptions" class="space-y-2"></ul>
+                </div>
+
+                <div class="flex justify-between mt-6">
+                    <div class="space-x-2">
+                        <button id="prevBtn"
+                            class="py-2 px-4 bg-accent dark:bg-slate-700/70 backdrop-blur-xl rounded-xl hover:opacity-90 transition font-semibold">Previous</button>
+                        <button id="nextBtn"
+                            class="py-2 px-4 bg-accent dark:bg-slate-700/70 backdrop-blur-xl rounded-xl hover:opacity-90 transition font-semibold">Next</button>
+                        <button id="markBtn"
+                            class="py-2 px-4 bg-yellow-400 rounded-xl hover:bg-yellow-500 transition font-semibold">Mark
+                            for Review</button>
+                    </div>
+                    <button id="submitBtn"
+                        class="py-2 px-6 bg-primary text-white rounded-xl font-semibold hover:opacity-90 transition">Submit</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal -->
+    <div id="confirmModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+        <div
+            class="bg-cardBg dark:bg-slate-800/80 backdrop-blur-xl p-6 rounded-2xl shadow-lg w-96 text-center transition-colors duration-500">
+            <h2 class="text-xl font-bold mb-4">Confirm Submission</h2>
+            <p class="mb-6">Are you sure you want to submit your exam?</p>
+            <div class="flex justify-center space-x-4">
+                <button id="cancelModal"
+                    class="py-2 px-4 bg-gray-300 dark:bg-slate-700 rounded-xl hover:bg-gray-400 dark:hover:bg-slate-600 transition">Cancel</button>
+                <button id="confirmModalBtn"
+                    class="py-2 px-6 bg-primary text-white rounded-xl hover:opacity-90 transition">Submit</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== Theme Toggle =====
+        const savedTheme = localStorage.getItem("theme");
+        if (savedTheme === "dark") document.documentElement.classList.add("dark");
+
+        document.getElementById("themeToggle").addEventListener("click", () => {
+            const isDark = document.documentElement.classList.toggle("dark");
+            localStorage.setItem("theme", isDark ? "dark" : "light");
+        });
+
+
+        document.addEventListener("DOMContentLoaded", () => {
+
+
+             // Particle background
+        const getParticleCount = () => window.innerWidth < 768 ? 15 : 40;
+
+        let particleInstance;
+
+        tsParticles.load("tsparticles", {
+            particles: {
+                number: { value: getParticleCount() },
+                color: { value: "#7C3AED" },
+                links: { enable: true, color: "#7C3AED", opacity: 0.2 },
+                move: { enable: true, speed: 0.5 },
+                size: { value: 2 }
+            }
+        }).then(container => {
+            particleInstance = container;
+        });
+
+        // Update particles on resize
+        window.addEventListener("resize", () => {
+            if (!particleInstance) return;
+
+            const newCount = getParticleCount();
+            particleInstance.options.particles.number.value = newCount;
+            particleInstance.refresh();
+        });
+
+            // ===== Route Guard =====
+            const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+            if (!currentUser) window.location.replace("login.html");
+
+            const selectedExam = JSON.parse(localStorage.getItem("currentExam"));
+            if (!selectedExam || !selectedExam.questions) {
+                alert("No exam selected or no questions available!");
+                window.location.replace("dashboard.html");
+            }
+
+            const durationMinutes = parseInt(selectedExam.duration); // exam duration in minutes
+
+            // Display user name
+            document.getElementById("userName").textContent = `Hello, ${currentUser.firstName} ${currentUser.lastName}`;
+
+            // ===== Dynamic Question Setup =====
+            let questions = selectedExam.questions.map((q, idx) => ({
+                id: idx + 1,
+                text: q.text,
+                answers: q.answers.sort(() => Math.random() - 0.5), // shuffle answers
+                userAnswer: null,
+                markedForReview: false
+            }));
+
+            // Randomize questions
+            questions = questions.sort(() => Math.random() - 0.5);
+
+            let currentQuestionIndex = 0;
+
+            // ===== Sidebar Nav =====
+            const questionNav = document.getElementById("questionNav");
+
+
+            function renderSidebar() {
+                questionNav.innerHTML = "";
+
+                questions.forEach((q, idx) => {
+                    const btn = document.createElement("button");
+                    btn.textContent = idx + 1;
+
+                    const isActive = idx === currentQuestionIndex;
+
+                    // Base style
+                    btn.className = "py-2 rounded-xl font-semibold w-full transition-all";
+
+                    // ===== MARKED (Always Yellow Priority) =====
+                    if (q.markedForReview) {
+                        btn.classList.add(isActive ? "bg-yellow-600" : "bg-marked", "text-white");
+
+                        // If also answered → keep green glow
+                        if (q.userAnswer !== null) {
+                            btn.classList.add("ring-4", "ring-answered");
+                        }
+                    }
+
+                    // ===== ANSWERED ONLY =====
+                    else if (q.userAnswer !== null) {
+                        btn.classList.add(isActive ? "bg-green-600" : "bg-answered", "text-white");
+                    }
+
+                    // ===== NOT VISITED =====
+                    else {
+                        if (isActive) {
+                            btn.classList.add("bg-gray-400", "text-white");
+                        } else {
+                            btn.classList.add("bg-notvisited", "text-secondary");
+                        }
+                    }
+
+                    btn.addEventListener("click", () => {
+                        currentQuestionIndex = idx;
+                        renderQuestion();
+                    });
+
+                    questionNav.appendChild(btn);
+                });
+            }
+            // ===== Render Question =====
+            const questionText = document.getElementById("questionText");
+            const answerOptions = document.getElementById("answerOptions");
+
+            function renderQuestion() {
+                const q = questions[currentQuestionIndex];
+                questionText.textContent = q.text;
+                answerOptions.innerHTML = "";
+
+
+                q.answers.forEach((a, i) => {
+    const li = document.createElement("li");
+    li.innerHTML = `
+    <label class="
+        flex items-center p-4 rounded-xl cursor-pointer
+        border border-gray-300 dark:border-slate-700
+        hover:border-primary hover:shadow-lg transition-all duration-300
+        ${q.userAnswer === i ? 'bg-primary/20 dark:bg-primary/30 border-primary' : 'bg-white dark:bg-[#1A202E]'}
+        relative
+    ">
+        <input type="radio" name="answer" value="${i}" class="appearance-none peer absolute">
+        <span class="ml-3 text-gray-800 dark:text-gray-200 font-medium peer-checked:font-bold peer-checked:text-primary">
+            ${a.text}
+        </span>
+        <span class="absolute right-4 w-4 h-4 rounded-full border-2 border-gray-400 dark:border-gray-500
+                     peer-checked:border-primary peer-checked:bg-primary transition-all duration-300"></span>
+    </label>
+    `;
+    answerOptions.appendChild(li);
+});
+
+            
+                  
+
+                // ===== Update Mark Button =====
+                const markBtn = document.getElementById("markBtn");
+                markBtn.textContent = q.markedForReview ? "Unmark" : "Mark for Review";
+
+                if (q.markedForReview) {
+                    markBtn.classList.remove("bg-yellow-400", "hover:bg-yellow-500");
+                    markBtn.classList.add("bg-yellow-600", "hover:bg-yellow-700");
+                } else {
+                    markBtn.classList.remove("bg-yellow-600", "hover:bg-yellow-700");
+                    markBtn.classList.add("bg-yellow-400", "hover:bg-yellow-500");
+                }
+
+                renderSidebar();
+                updateProgressBar();
+            }
+
+            // ===== Progress Bar =====
+            const progressBar = document.getElementById("progressBar");
+            const progressText = document.getElementById("progressText");
+
+            function animateCounter(target) {
+                let current = 0;
+                const increment = Math.ceil(target / 20);
+                const interval = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        current = target;
+                        clearInterval(interval);
+                    }
+                    progressText.textContent = current + "%";
+                }, 20);
+            }
+
+            function updateProgressBar() {
+                const answered = questions.filter(q => q.userAnswer !== null).length;
+                const percent = Math.round((answered / questions.length) * 100);
+
+                progressBar.style.width = percent + "%";
+
+                // Gradient colors based on progress
+                if (percent < 40) {
+                    progressBar.className =
+                        "h-6 rounded-full flex items-center justify-center text-xs font-bold text-white transition-all duration-500 ease-out relative overflow-hidden bg-gradient-to-r from-red-500 to-red-700";
+                } else if (percent < 80) {
+                    progressBar.className =
+                        "h-6 rounded-full flex items-center justify-center text-xs font-bold text-white transition-all duration-500 ease-out relative overflow-hidden bg-gradient-to-r from-yellow-400 to-yellow-600";
+                } else {
+                    progressBar.className =
+                        "h-6 rounded-full flex items-center justify-center text-xs font-bold text-white transition-all duration-500 ease-out relative overflow-hidden bg-gradient-to-r from-green-400 to-green-600";
+                }
+
+                animateCounter(percent);
+
+                // Celebration glow at 100%
+                if (percent === 100) {
+                    progressBar.classList.add("pulse-glow");
+                    setTimeout(() => progressBar.classList.remove("pulse-glow"), 2000);
+                }
+            }
+
+            // ===== Navigation Buttons =====
+            document.getElementById("nextBtn").addEventListener("click", () => { saveAnswer(); if (currentQuestionIndex < questions.length - 1) currentQuestionIndex++; renderQuestion(); });
+            document.getElementById("prevBtn").addEventListener("click", () => { saveAnswer(); if (currentQuestionIndex > 0) currentQuestionIndex--; renderQuestion(); });
+
+
+
+
+            // ===== Mark for Review Toggle with Text Change =====
+            const markBtn = document.getElementById("markBtn");
+
+            markBtn.addEventListener("click", () => {
+                const currentQ = questions[currentQuestionIndex];
+
+                // Toggle the markedForReview flag
+                currentQ.markedForReview = !currentQ.markedForReview;
+
+                // Update button text
+                markBtn.textContent = currentQ.markedForReview ? "Unmark" : "Mark for Review";
+
+                // Update button color for visual feedback
+                if (currentQ.markedForReview) {
+                    markBtn.classList.remove("bg-yellow-400", "hover:bg-yellow-500");
+                    markBtn.classList.add("bg-yellow-600", "hover:bg-yellow-700");
+                } else {
+                    markBtn.classList.remove("bg-yellow-600", "hover:bg-yellow-700");
+                    markBtn.classList.add("bg-yellow-400", "hover:bg-yellow-500");
+                }
+
+                // Refresh sidebar to reflect new mark state
+                renderSidebar();
+            });
+
+
+
+            // ===== Save Answer =====
+            function saveAnswer() {
+                const selected = document.querySelector('input[name="answer"]:checked');
+                questions[currentQuestionIndex].userAnswer = selected ? parseInt(selected.value) : null;
+                renderSidebar();
+                localStorage.setItem("currentExamAnswers", JSON.stringify(questions));
+            }
+
+            // ===== Submit Confirmation =====
+            const confirmModal = document.getElementById("confirmModal");
+            const submitBtn = document.getElementById("submitBtn");
+            submitBtn.addEventListener("click", () => confirmModal.classList.remove("hidden"));
+            document.getElementById("cancelModal").addEventListener("click", () => confirmModal.classList.add("hidden"));
+            document.getElementById("confirmModalBtn").addEventListener("click", submitExam);
+
+
+
+            function submitExam() {
+                saveAnswer();
+                confirmModal.classList.add("hidden");
+                clearInterval(timerInterval);
+
+                let correct = 0;
+                let wrong = 0;
+                let unanswered = 0;
+
+                questions.forEach(q => {
+                    if (q.userAnswer === null) {
+                        unanswered++;
+                    } else if (q.answers[q.userAnswer].isCorrect) {
+                        correct++;
+                    } else {
+                        wrong++;
+                    }
+                });
+
+                const scorePercent = Math.round((correct / questions.length) * 100);
+
+                const resultData = {
+                    user: currentUser,
+                    exam: selectedExam,
+                    questions: questions,
+                    correct,
+                    wrong,
+                    unanswered,
+                    scorePercent,
+                    passed: scorePercent >= 50
+                };
+
+                localStorage.setItem("examResult", JSON.stringify(resultData));
+
+                window.location.replace("results.html");
+            }
+
+            function gradesPage(score) {
+                alert(`Hello ${currentUser.firstName} ${currentUser.lastName}, your score is ${Math.round((score / questions.length) * 100)}%`);
+                window.location.replace("dashboard.html");
+            }
+
+            function timeoutPage() {
+                saveAnswer();
+                clearInterval(timerInterval);
+
+                let correct = 0;
+                let wrong = 0;
+                let unanswered = 0;
+
+                questions.forEach(q => {
+                    if (q.userAnswer === null) {
+                        unanswered++;
+                    } else if (q.answers[q.userAnswer].isCorrect) {
+                        correct++;
+                    } else {
+                        wrong++;
+                    }
+                });
+
+                const scorePercent = Math.round((correct / questions.length) * 100);
+
+                const resultData = {
+                    user: currentUser,
+                    exam: selectedExam,
+                    questions: questions,
+                    correct,
+                    wrong,
+                    unanswered,
+                    scorePercent,
+                    passed: scorePercent >= 50,
+                    timedOut: true
+                };
+
+                localStorage.setItem("examResult", JSON.stringify(resultData));
+
+                window.location.replace("timeout.html");
+            }
+
+            // ===== Timer =====
+            let timeRemaining = durationMinutes * 60; // in seconds
+            const timerEl = document.getElementById("timer");
+            const timerInterval = setInterval(() => {
+                const mins = Math.floor(timeRemaining / 60);
+                const secs = timeRemaining % 60;
+                timerEl.textContent = `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+                timeRemaining--;
+                if (timeRemaining < 0) {
+                    clearInterval(timerInterval);
+                    saveAnswer();
+                    timeoutPage();
+                }
+            }, 1000);
+
+            // ===== Anti-Tab Switch =====
+
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) {
+                    tabSwitchCount++;
+                    alert(`Tab switch detected! Attempts: ${tabSwitchCount}`);
+                }
+            });
+
+            // ===== Prevent Back Navigation =====
+            history.pushState(null, null, location.href);
+            window.onpopstate = function () { history.go(1); };
+
+            renderQuestion();
+
+
+
+
+        });
+
+        // function preventBack() {
+        //     window.history.forward();
+        // }
+
+        // setTimeout(preventBack, 0);
+
+        // window.onunload = function () { null };
+
+
+    </script>
+
+</body>
+
+</html>

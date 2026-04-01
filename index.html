@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en" class="transition-colors duration-500">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examify - Smart Examination Platform</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#7C3AED",
+                        secondary: "#4F46E5",
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(-45deg, #ffffff, #eef2ff, #f5f3ff, #e0f2fe);
+            background-size: 400% 400%;
+            animation: gradientMove 15s ease infinite;
+            overflow-x: hidden;
+        }
+
+        .dark body {
+            background: #0F172A;
+        }
+
+        @keyframes gradientMove {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all .8s ease;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .glow-btn {
+            box-shadow: 0 10px 25px rgba(124, 58, 237, .3);
+            transition: all .3s ease;
+            animation: pulse-btn 2s infinite;
+        }
+
+        .glow-btn:hover {
+            box-shadow: 0 20px 40px rgba(124, 58, 237, .5);
+            transform: translateY(-3px);
+        }
+
+        @keyframes pulse-btn {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .card-tilt {
+            transition: transform .2s ease;
+            transform-style: preserve-3d;
+        }
+
+        .cursor-light {
+            position: fixed;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(124, 58, 237, .15) 0%, transparent 70%);
+            pointer-events: none;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+        }
+
+        .blur-shape {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: .3;
+            z-index: -2;
+        }
+
+        /* Timeline styles */
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 1rem;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background-color: #7C3AED;
+            border-radius: 2px;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2rem;
+            padding-left: 2rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -0.35rem;
+            top: 0.25rem;
+            width: 0.75rem;
+            height: 0.75rem;
+            background-color: #7C3AED;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+
+        /* CTA */
+
+        @keyframes gradient-x {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .animate-gradient-x {
+            background-size: 300% 300%;
+            animation: gradient-x 12s ease infinite;
+        }
+    </style>
+</head>
+
+<body class="text-slate-800 dark:text-white transition-colors duration-500 relative overflow-x-hidden">
+
+    <div class="cursor-light" id="cursorLight"></div>
+    <!-- <div class="blur-shape bg-purple-400 w-96 h-96 -top-24 -left-24"></div>
+    <div class="blur-shape bg-blue-400 w-96 h-96 -bottom-24 -right-24"></div> -->
+    <div id="tsparticles" class="fixed inset-0 -z-10"></div>
+    <div class="blur-shape bg-purple-400 w-96 h-96 -top-24 -left-24 pointer-events-none"></div>
+    <div class="blur-shape bg-blue-400 w-96 h-96 -bottom-24 -right-24 pointer-events-none"></div>
+
+    <!-- NAVBAR -->
+    <nav
+        class="fixed w-full bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl shadow-md border-b border-purple-100 dark:border-slate-700 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center relative">
+            <h1 class="text-3xl font-extrabold tracking-tight text-primary">Examify</h1>
+
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex items-center space-x-8 text-slate-600 dark:text-slate-300">
+                <a href="#features" class="hover:text-primary transition">Features</a>
+                <a href="#how" class="hover:text-primary transition">How It Works</a>
+                <a href="login.html" class="hover:text-primary transition">Login</a>
+
+                <button id="themeToggle"
+                    class="px-3 py-1 border border-primary rounded-lg hover:bg-primary hover:text-white transition">
+                    🌓
+                </button>
+
+                <a href="register.html" class="px-5 py-2 bg-primary text-white rounded-lg glow-btn">
+                    Sign Up
+                </a>
+            </div>
+
+            <!-- Hamburger -->
+            <button id="menu-btn" class="md:hidden flex flex-col space-y-1">
+                <span class="hamburger-line w-6 h-0.5 bg-slate-800 dark:bg-white transition-all duration-300"></span>
+                <span class="hamburger-line w-6 h-0.5 bg-slate-800 dark:bg-white transition-all duration-300"></span>
+                <span class="hamburger-line w-6 h-0.5 bg-slate-800 dark:bg-white transition-all duration-300"></span>
+            </button>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="md:hidden absolute top-full left-0 w-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl 
+        border-t border-purple-100 dark:border-slate-700 
+        transform scale-y-0 opacity-0 origin-top transition-all duration-300">
+
+            <div class="flex flex-col px-6 py-6 space-y-4 text-slate-600 dark:text-slate-300">
+                <a href="#features" class="hover:text-primary transition">Features</a>
+                <a href="#how" class="hover:text-primary transition">How It Works</a>
+                <a href="login.html" class="hover:text-primary transition">Login</a>
+
+                <button id="themeToggleMobile"
+                    class="px-4 py-2 border border-primary rounded-lg hover:bg-primary hover:text-white transition text-left">
+                    🌓 Toggle Theme
+                </button>
+                <a href="register.html" class="text-center px-5 py-2 bg-primary text-white rounded-lg glow-btn">
+                    Sign Up
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section
+        class=" flex flex-col-reverse lg:flex-row items-center justify-center text-center lg:text-left px-6 gap-10 lg:gap-16 py-12">
+
+        <!-- Text Content -->
+        <div class="max-w-xl reveal flex flex-col items-center lg:items-start">
+            <h2
+                class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight text-primary mb-4 sm:mb-6">
+                Smart Examination Platform
+            </h2>
+            <p class="text-base sm:text-lg md:text-xl text-slate-600 dark:text-slate-300 mb-2 sm:mb-4">
+                Designed for Performance, Precision & Innovation.
+            </p>
+            <p class="text-sm sm:text-base text-slate-500 dark:text-slate-400 mb-6 sm:mb-8 leading-relaxed">
+                A fully interactive, timed, and randomized examination system built with modern frontend architecture.
+                Experience seamless assessment, real-time grading, and intelligent exam flow — all in one powerful
+                platform.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center lg:justify-start gap-4 w-full sm:w-auto">
+                <a href="register.html"
+                    class="px-8 py-3 bg-primary text-white rounded-lg glow-btn w-full sm:w-auto text-center">
+                    Get Started
+                </a>
+                <a href="#"
+                    class="px-8 py-3 border border-primary text-primary rounded-lg hover:bg-primary hover:text-white transition w-full sm:w-auto text-center">
+                    View Demo
+                </a>
+            </div>
+        </div>
+
+        <!-- Lottie Animation -->
+        <div class="max-w-md w-full reveal mx-auto lg:mx-0">
+            <lottie-player src="./assets/Learning Data.json" background="transparent" speed="1" loop autoplay
+                class="w-full h-64 sm:h-80 md:h-96 lg:h-[32rem]"></lottie-player>
+        </div>
+
+    </section>
+
+    <!-- FEATURES Section -->
+    <section id="features" class="py-24 px-6 max-w-7xl mx-auto">
+        <h3 class="text-3xl sm:text-4xl font-extrabold text-center mb-16 reveal text-primary dark:text-white">
+            Powerful Features Built for a Modern Learning Experience
+        </h3>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+
+            <!--  Timed Exams -->
+            <div class="card-tilt reveal p-6 rounded-3xl border border-transparent dark:border-primary flex flex-col items-center text-center
+        bg-gradient-to-br from-purple-100 to-purple-200 dark:bg-none dark:bg-[#1A202E]/60 dark:backdrop-blur-md
+        shadow-2xl dark:shadow-none transition-all duration-500
+        hover:border-primary hover:scale-105 hover:shadow-3xl dark:hover:shadow-[0_0_25px_#8B5CF6]">
+
+                <svg xmlns="http://www.w3.org/2000/svg"
+                    class="w-20 h-20 mb-4 float-animation text-primary dark:text-white dark:hover:text-[#8B5CF6] hover:glow-icon"
+                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+
+                <h4 class="text-xl font-semibold mt-4 text-primary dark:text-white">Timed Exams</h4>
+
+                <p class="text-sm mt-2 text-purple-800 dark:text-gray-300 text-center">
+                    Real‑time countdown and automatic submission system.
+                </p>
+            </div>
+            <!-- Smart Randomization -->
+            <div class="card-tilt reveal p-6 rounded-3xl border border-transparent dark:border-primary flex flex-col items-center text-center
+        bg-gradient-to-br from-purple-100 to-purple-200 dark:bg-none dark:bg-[#1A202E]/60 dark:backdrop-blur-md
+        shadow-2xl dark:shadow-none transition-all duration-500
+        hover:border-primary hover:scale-105 hover:shadow-3xl dark:hover:shadow-[0_0_25px_#8B5CF6]">
+
+                <svg xmlns="http://www.w3.org/2000/svg"
+                    class="w-20 h-20 mb-4 float-animation text-primary dark:text-white dark:hover:text-[#8B5CF6] hover:glow-icon"
+                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" />
+                </svg>
+
+                <h4 class="text-xl font-semibold mt-4 text-primary dark:text-white">Smart Randomization</h4>
+
+                <p class="text-sm mt-2 text-purple-800 dark:text-gray-300 text-center">
+                    Questions dynamically shuffled for fairness.
+                </p>
+            </div>
+
+
+
+
+            <!-- Instant Performance Analysis -->
+            <div class="card-tilt reveal p-6 rounded-3xl border border-transparent dark:border-primary flex flex-col items-center text-center
+    bg-gradient-to-br from-purple-100 to-purple-200 dark:bg-none dark:bg-[#1A202E]/60 dark:backdrop-blur-md
+    shadow-2xl dark:shadow-none transition-all duration-500
+    hover:border-primary hover:scale-105 hover:shadow-3xl dark:hover:shadow-[0_0_25px_#8B5CF6]">
+
+                <svg xmlns="http://www.w3.org/2000/svg"
+                    class="w-20 h-20 mb-4 float-animation text-primary dark:text-white dark:hover:text-[#8B5CF6] hover:glow-icon"
+                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <!-- Bar Chart -->
+                    <line x1="4" y1="20" x2="4" y2="10" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    <line x1="10" y1="20" x2="10" y2="4" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    <line x1="16" y1="20" x2="16" y2="14" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    <line x1="22" y1="20" x2="22" y2="8" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                </svg>
+
+                <h4 class="text-xl font-semibold mt-4 text-primary dark:text-white">Instant Performance Analysis</h4>
+
+                <p class="text-sm mt-2 text-purple-800 dark:text-gray-300 text-center">
+                    Detailed results with scoring breakdown.
+                </p>
+            </div>
+
+            <!-- Secure Exam Simulation -->
+
+            <div class="card-tilt reveal p-6 rounded-3xl border border-transparent dark:border-primary flex flex-col items-center text-center
+        bg-gradient-to-br from-purple-100 to-purple-200 dark:bg-none dark:bg-[#1A202E]/60 dark:backdrop-blur-md
+        shadow-2xl dark:shadow-none transition-all duration-500
+        hover:border-primary hover:scale-105 hover:shadow-3xl dark:hover:shadow-[0_0_25px_#8B5CF6]">
+
+                <svg xmlns="http://www.w3.org/2000/svg"
+                    class="w-20 h-20 mb-4 float-animation text-primary dark:text-white dark:hover:text-[#8B5CF6] hover:glow-icon"
+                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 11c-1.657 0-3 1.343-3 3v2h6v-2c0-1.657-1.343-3-3-3z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 7a4 4 0 00-4 4v2h8V11a4 4 0 00-4-4z" />
+                </svg>
+
+                <h4 class="text-xl font-semibold mt-4 text-primary dark:text-white">Secure Exam Simulation</h4>
+
+                <p class="text-sm mt-2 text-purple-800 dark:text-gray-300 text-center">
+                    Tab‑switch detection and session control.
+                </p>
+            </div>
+
+
+            <!-- Fully Responsive Design -->
+            <div class="card-tilt reveal p-6 rounded-3xl border border-transparent dark:border-primary flex flex-col items-center text-center
+    bg-gradient-to-br from-purple-100 to-purple-200 dark:bg-none dark:bg-[#1A202E]/60 dark:backdrop-blur-md
+    shadow-2xl dark:shadow-none transition-all duration-500
+    hover:border-primary hover:scale-105 hover:shadow-3xl dark:hover:shadow-[0_0_25px_#8B5CF6]">
+
+                <svg xmlns="http://www.w3.org/2000/svg"
+                    class="w-20 h-20 mb-4 float-animation text-primary dark:text-white dark:hover:text-[#8B5CF6] hover:glow-icon"
+                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <!-- Desktop -->
+                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    <line x1="8" y1="21" x2="16" y2="21" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    <line x1="12" y1="17" x2="12" y2="21" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
+
+                </svg>
+
+                <h4 class="text-xl font-semibold mt-4 text-primary dark:text-white">Fully Responsive Design</h4>
+
+                <p class="text-sm mt-2 text-purple-800 dark:text-gray-300 text-center">
+                    Optimized for desktop, tablet, & mobile.
+                </p>
+            </div>
+
+            <!-- Modern UI Architecture -->
+            <div class="card-tilt reveal p-6 rounded-3xl border border-transparent dark:border-primary flex flex-col items-center text-center
+    bg-gradient-to-br from-purple-100 to-purple-200 dark:bg-none dark:bg-[#1A202E]/60 dark:backdrop-blur-md
+    shadow-2xl dark:shadow-none transition-all duration-500
+    hover:border-primary hover:scale-105 hover:shadow-3xl dark:hover:shadow-[0_0_25px_#8B5CF6]">
+
+                <svg xmlns="http://www.w3.org/2000/svg"
+                    class="w-20 h-20 mb-4 float-animation text-primary dark:text-white dark:hover:text-[#8B5CF6] hover:glow-icon"
+                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <!-- Modular blocks layout -->
+                    <rect x="3" y="3" width="7" height="7" rx="1" ry="1" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    <rect x="14" y="3" width="7" height="7" rx="1" ry="1" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    <rect x="3" y="14" width="7" height="7" rx="1" ry="1" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    <rect x="14" y="14" width="7" height="7" rx="1" ry="1" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                </svg>
+
+                <h4 class="text-xl font-semibold mt-4 text-primary dark:text-white">Modern UI Architecture</h4>
+
+                <p class="text-sm mt-2 text-purple-800 dark:text-gray-300 text-center">
+                    Clean design principles and scalable structure.
+                </p>
+            </div>
+
+
+        </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section id="how" class="py-24 px-6 reveal">
+        <h3 class="text-4xl font-bold text-center mb-16">Simple. Structured. Powerful.</h3>
+
+        <div class="timeline max-w-3xl mx-auto">
+            <div class="timeline-item reveal">
+                <h4 class="font-semibold">Register Account</h4>
+                <p>Create your account securely to get started.</p>
+            </div>
+            <div class="timeline-item reveal">
+                <h4 class="font-semibold">Sign In</h4>
+                <p>Access your personalized dashboard.</p>
+            </div>
+            <div class="timeline-item reveal">
+                <h4 class="font-semibold">Start Exam</h4>
+                <p>Begin your timed examination session with full focus.</p>
+            </div>
+            <div class="timeline-item reveal">
+                <h4 class="font-semibold">Submit Exam</h4>
+                <p>Submit answers before time ends and receive immediate feedback.</p>
+            </div>
+            <div class="timeline-item reveal">
+                <h4 class="font-semibold">Review Performance</h4>
+                <p>Analyze scores, detailed breakdown, and insights.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FINAL CTA with Soft Animated Gradient -->
+    <section
+        class="py-24 px-6 text-center relative overflow-hidden border-t border-purple-100 dark:border-slate-700 reveal">
+
+        <!-- Soft animated gradient background -->
+        <div class="absolute inset-0 -z-10 bg-gradient-to-br from-purple-200 via-pink-200 to-indigo-200 
+            dark:from-slate-800/90 dark:via-slate-700/90 dark:to-slate-800/90 
+            opacity-90 animate-gradient-x backdrop-blur-xl">
+        </div>
+
+        <h3 class="text-4xl font-bold mb-6 text-purple-900 dark:text-white drop-shadow-md">
+            Ready to Experience the Future of Digital Assessment?
+        </h3>
+
+        <p class="mb-8 text-lg text-purple-800 dark:text-slate-300 sm:text-base drop-shadow-sm">
+            Join thousands of students and educators using Examify.
+        </p>
+
+        <div class="mb-8 flex justify-center items-center gap-10 flex-wrap opacity-80">
+
+            <!-- Harvard University -->
+            <img src="./assets/Harvard_Crimson_logo_2020.svg" alt="Harvard University"
+                class="h-10 object-contain transition duration-300 hover:opacity-100">
+
+            <!-- Stanford University -->
+            <img src="./assets/Seal_of_Leland_Stanford_Junior_University.svg" alt="Stanford University"
+                class="h-10 object-contain transition duration-300 hover:opacity-100">
+
+            <!-- MIT -->
+            <img src="./assets/MIT_2023_red_logo.svg" alt="MIT"
+                class="h-10 object-contain transition duration-300 hover:opacity-100">
+
+        </div>
+
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+            <!-- Primary Button -->
+            <a href="register.html" class="px-8 py-3 w-full sm:w-auto text-center font-semibold rounded-lg
+                   bg-purple-600 text-white
+                   hover:bg-purple-700 transition-colors duration-300
+                   dark:bg-purple-500 dark:hover:bg-purple-600">
+                Create Account
+            </a>
+
+            <!-- Secondary Button -->
+            <a href="login.html" class="px-8 py-3 w-full sm:w-auto text-center font-semibold rounded-lg
+                   border border-purple-300 text-purple-700
+                   hover:bg-purple-100 transition-colors duration-300
+                   dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700">
+                Sign In
+            </a>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="py-10 text-center border-t border-purple-100 dark:border-slate-700 text-sm sm:text-base">
+        <p>Examify © 2026</p>
+        <p class="mt-2 opacity-70">Designed & Developed by Sara Ghareeb</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Particle background
+        const getParticleCount = () => window.innerWidth < 768 ? 15 : 40;
+
+        let particleInstance;
+
+        tsParticles.load("tsparticles", {
+            particles: {
+                number: { value: getParticleCount() },
+                color: { value: "#7C3AED" },
+                links: { enable: true, color: "#7C3AED", opacity: 0.2 },
+                move: { enable: true, speed: 0.5 },
+                size: { value: 2 }
+            }
+        }).then(container => {
+            particleInstance = container;
+        });
+
+        // Update particles on resize
+        window.addEventListener("resize", () => {
+            if (!particleInstance) return;
+
+            const newCount = getParticleCount();
+            particleInstance.options.particles.number.value = newCount;
+            particleInstance.refresh();
+        });
+
+
+        // Apply saved theme on load
+        const savedTheme = localStorage.getItem("theme");
+
+        if (savedTheme === "dark") {
+            document.documentElement.classList.add("dark");
+        } else {
+            document.documentElement.classList.remove("dark");
+        }
+
+        // Cursor light
+        document.addEventListener("mousemove", e => {
+            const light = document.getElementById("cursorLight");
+            light.style.left = e.clientX + "px";
+            light.style.top = e.clientY + "px";
+        });
+
+        // Reveal animations
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) { entry.target.classList.add("active"); }
+            });
+        }, { threshold: 0.2 });
+        document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
+
+        // Card Tilt Effect
+        document.querySelectorAll(".card-tilt").forEach(card => {
+            if (window.innerWidth > 640) {
+                const sensitivity = 15; // lower = more tilt, higher = less tilt
+                card.addEventListener("mousemove", e => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    const rotateX = (y - centerY) / sensitivity;
+                    const rotateY = (centerX - x) / sensitivity;
+
+                    // Smooth transform
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
+                });
+
+                card.addEventListener("mouseleave", () => {
+                    card.style.transform = "perspective(1000px) rotateX(0) rotateY(0) scale(1)";
+                });
+
+                card.addEventListener("mouseenter", () => {
+                    card.style.transition = "transform 0.2s ease";
+                });
+            }
+        });
+
+
+        // Mobile menu toggle
+        const menuBtn = document.getElementById("menu-btn");
+        const mobileMenu = document.getElementById("mobile-menu");
+        const hamburgerLines = document.querySelectorAll(".hamburger-line");
+
+        menuBtn.addEventListener("click", () => {
+            const isOpen = mobileMenu.classList.contains("scale-y-100");
+
+            if (isOpen) {
+                mobileMenu.classList.remove("scale-y-100", "opacity-100");
+                mobileMenu.classList.add("scale-y-0", "opacity-0");
+                document.body.classList.remove("overflow-hidden");
+            } else {
+                mobileMenu.classList.remove("scale-y-0", "opacity-0");
+                mobileMenu.classList.add("scale-y-100", "opacity-100");
+                document.body.classList.add("overflow-hidden");
+            }
+
+            // Hamburger animation
+            hamburgerLines[0].classList.toggle("rotate-45");
+            hamburgerLines[0].classList.toggle("translate-y-1.5");
+            hamburgerLines[1].classList.toggle("opacity-0");
+            hamburgerLines[2].classList.toggle("-rotate-45");
+            hamburgerLines[2].classList.toggle("-translate-y-1.5");
+        });
+
+
+        // ===============================
+        // Dark mode toggle (Desktop + Mobile)
+        // ===============================
+
+
+        const toggleTheme = () => {
+            const isDark = document.documentElement.classList.toggle("dark");
+
+            // Save preference
+            localStorage.setItem("theme", isDark ? "dark" : "light");
+        };
+        const desktopToggle = document.getElementById("themeToggle");
+        const mobileToggle = document.getElementById("themeToggleMobile");
+
+        if (desktopToggle) {
+            desktopToggle.addEventListener("click", toggleTheme);
+        }
+
+        if (mobileToggle) {
+            mobileToggle.addEventListener("click", () => {
+                toggleTheme();
+
+                // Close mobile menu after toggling
+                mobileMenu.classList.remove("scale-y-100", "opacity-100");
+                mobileMenu.classList.add("scale-y-0", "opacity-0");
+                document.body.classList.remove("overflow-hidden");
+
+                // Reset hamburger animation
+                hamburgerLines[0].classList.remove("rotate-45", "translate-y-1.5");
+                hamburgerLines[1].classList.remove("opacity-0");
+                hamburgerLines[2].classList.remove("-rotate-45", "-translate-y-1.5");
+            });
+        }
+    </script>
+
+</body>
+
+</html>
