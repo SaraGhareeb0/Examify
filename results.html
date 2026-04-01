@@ -81,10 +81,10 @@
     <div id="tsparticles" class="fixed inset-0 -z-10"></div>
 
     <!-- Result Card -->
-    <div class="card bg-white dark:bg-slate-800/80 backdrop-blur-xl dark:border-slate-700 shadow-2xl  rounded-3xl p-10 max-w-3xl w-full">
+    <div class="card bg-white dark:bg-slate-800/80 backdrop-blur-xl dark:border-slate-700 shadow-2xl rounded-3xl sm:p-10 p-6 max-w-full sm:max-w-3xl w-full">
 
         <!-- Personalized Message -->
-        <h1 id="resultMessage" class="text-2xl font-bold text-primary mb-6 text-center dark:text-slate-100 "></h1>
+        <h1 id="resultMessage" class="text-xl sm:text-2xl font-bold text-primary mb-6 text-center dark:text-slate-100"></h1>
 
         <!-- Performance Bar -->
         <div class="mb-6">
@@ -93,34 +93,34 @@
             </div>
         </div>
 
-        <!-- Breakdown -->
-        <div class="grid grid-cols-3 gap-4 text-center mb-6">
-            <div class="bg-green-100 dark:bg-green-800/40 p-4 rounded-xl">
-                <p class="text-lg font-bold text-success" id="correctCount"></p>
-                <p>Correct</p>
-            </div>
+   <!-- Breakdown -->
+<div class="grid grid-cols-1 sm:grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-4 text-center mb-6">
+    <div class="bg-green-100 dark:bg-green-800/40 p-4 rounded-xl">
+        <p class="text-sm sm:text-lg font-bold text-success" id="correctCount"></p>
+        <p class="text-sm sm:text-base break-words">Correct</p>
+    </div>
 
-            <div class="bg-red-100 dark:bg-red-800/40 p-4 rounded-xl">
-                <p class="text-lg font-bold text-danger" id="wrongCount"></p>
-                <p>Wrong</p>
-            </div>
+    <div class="bg-red-100 dark:bg-red-800/40 p-4 rounded-xl">
+        <p class="text-sm sm:text-lg font-bold text-danger" id="wrongCount"></p>
+        <p class="text-sm sm:text-base break-words">Wrong</p>
+    </div>
 
-            <div class="bg-yellow-100 dark:bg-yellow-800/40 p-4 rounded-xl">
-                <p class="text-lg font-bold text-warning" id="unansweredCount"></p>
-                <p>Unanswered</p>
-            </div>
-        </div>
+    <div class="bg-yellow-100 dark:bg-yellow-800/40 p-4 rounded-xl">
+        <p class="text-sm sm:text-lg font-bold text-warning" id="unansweredCount"></p>
+        <p class="text-sm sm:text-base break-words">Unanswered</p>
+    </div>
+</div>
 
         <!-- Chart -->
         <div class="mt-8 flex justify-center">
-            <div class="w-64 h-64">
+            <div class="w-48 h-48 sm:w-64 sm:h-64">
                 <canvas id="resultChart"></canvas>
             </div>
         </div>
 
         <!-- Pass / Fail -->
         <div class="text-center mb-6">
-            <p id="gradeStatus" class="text-xl font-semibold"></p>
+            <p id="gradeStatus" class="text-lg sm:text-xl font-semibold"></p>
         </div>
 
         <!-- Buttons -->
@@ -130,6 +130,7 @@
             </button>
         </div>
     </div>
+
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {

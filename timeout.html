@@ -94,21 +94,23 @@
             </div>
         </div>
 
-        <!-- Partial Results -->
-        <div class="grid grid-cols-3 gap-4 text-center mb-6">
-            <div class="bg-green-100 dark:bg-green-800/40 p-4 rounded-xl">
-                <p class="text-lg font-bold text-success" id="correctCount"></p>
-                <p>Correct</p>
-            </div>
-            <div class="bg-red-100 dark:bg-red-800/40 p-4 rounded-xl">
-                <p class="text-lg font-bold text-danger" id="wrongCount"></p>
-                <p>Wrong</p>
-            </div>
-            <div class="bg-yellow-100 dark:bg-yellow-800/40 p-4 rounded-xl">
-                <p class="text-lg font-bold text-warning" id="unansweredCount"></p>
-                <p>Unanswered</p>
-            </div>
-        </div>
+       <!-- Breakdown -->
+<div class="grid grid-cols-1 sm:grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-4 text-center mb-6">
+    <div class="bg-green-100 dark:bg-green-800/40 p-4 rounded-xl">
+        <p class="text-sm sm:text-lg font-bold text-success" id="correctCount"></p>
+        <p class="text-sm sm:text-base break-words">Correct</p>
+    </div>
+
+    <div class="bg-red-100 dark:bg-red-800/40 p-4 rounded-xl">
+        <p class="text-sm sm:text-lg font-bold text-danger" id="wrongCount"></p>
+        <p class="text-sm sm:text-base break-words">Wrong</p>
+    </div>
+
+    <div class="bg-yellow-100 dark:bg-yellow-800/40 p-4 rounded-xl">
+        <p class="text-sm sm:text-lg font-bold text-warning" id="unansweredCount"></p>
+        <p class="text-sm sm:text-base break-words">Unanswered</p>
+    </div>
+</div>
 
         <!-- Final Score -->
         <h2 id="finalScore" class="text-xl font-semibold mb-6"></h2>
