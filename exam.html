@@ -101,26 +101,27 @@
 
     <!-- Header -->
     <header
-        class="bg-cardBg dark:bg-slate-800/80 backdrop-blur-xl p-4 shadow-md flex flex-col md:flex-row justify-between items-start md:items-center border-b border-gray-200 dark:border-slate-700 transition-colors duration-500 space-y-2 md:space-y-0">
-       <div class="flex justify-between items-center w-full">
-    <!-- Username on the left -->
-    <h1 class="text-xl font-bold text-primary dark:text-slate-100">
-        <span id="userName">Student</span>
-    </h1>
+        class="bg-cardBg dark:bg-slate-800/80 backdrop-blur-xl p-4 shadow-md flex flex-col justify-between items-start border-b border-gray-200 dark:border-slate-700 transition-colors duration-500 space-y-2">
 
-    <!-- Theme Toggle on the right -->
-    <button id="themeToggle"
-        class="px-3 py-1 border border-primary rounded-lg hover:bg-primary hover:text-white transition bg-white/70 dark:bg-slate-800/70 backdrop-blur">
-        🌓
-    </button>
-</div>
-        
-        <div class="flex flex-col md:flex-row items-start md:items-center space-y-2 md:space-y-0 md:space-x-4 w-full md:w-auto">
-            <div class="text-textSecondary dark:text-slate-300 font-semibold">
-                Time Remaining: <span id="timer">00:00</span>
-            </div>
-            <div class="flex flex-col md:flex-row items-start md:items-center space-y-2 md:space-y-0 md:space-x-2 w-full md:w-auto">
-                <div class="w-full md:w-72 bg-gray-200 dark:bg-slate-700 rounded-full h-6 overflow-hidden relative shadow-inner">
+        <!-- Top row: Username + Toggle -->
+        <div class="flex justify-between items-center w-full">
+            <h1 class="text-xl font-bold text-primary dark:text-slate-100">
+                <span id="userName">Student</span>
+            </h1>
+            <button id="themeToggle"
+                class="px-3 py-1 border border-primary rounded-lg hover:bg-primary hover:text-white transition bg-white/70 dark:bg-slate-800/70 backdrop-blur">
+                🌓
+            </button>
+        </div>
+
+        <!-- Progress bar below -->
+        <div class="flex flex-col items-start w-full mt-2">
+            <div class="flex flex-col items-start space-y-2 w-full">
+                <div class="text-textSecondary dark:text-slate-300 font-semibold">
+                    Time Remaining: <span id="timer">00:00</span>
+                </div>
+                <div
+                    class="w-full bg-gray-200 dark:bg-slate-700 rounded-full h-6 overflow-hidden relative shadow-inner">
                     <div id="progressBar"
                         class="h-6 w-0 rounded-full flex items-center justify-center text-xs font-bold text-white transition-all duration-500 ease-out relative overflow-hidden">
                         <span id="progressText" class="relative z-10">0%</span>
@@ -129,7 +130,6 @@
                         </div>
                     </div>
                 </div>
-               
             </div>
         </div>
     </header>
@@ -140,7 +140,9 @@
         <!-- Sidebar -->
         <aside
             class="w-full md:w-24 bg-sectionBg dark:bg-slate-900/80 backdrop-blur-xl border-r border-gray-200 dark:border-slate-700 p-4 overflow-y-auto transition-colors duration-500">
-            <div id="questionNav" class="flex flex-row md:flex-col space-x-2 md:space-x-0 md:space-y-2 overflow-x-auto md:overflow-x-visible"></div>
+            <div id="questionNav"
+                class="flex flex-row md:flex-col space-x-2 md:space-x-0 md:space-y-2 overflow-x-auto md:overflow-x-visible">
+            </div>
         </aside>
 
         <!-- Main Content -->
@@ -148,33 +150,26 @@
             <div id="questionContainer"
                 class="bg-cardBg dark:bg-slate-800/80 backdrop-blur-xl p-4 md:p-6 rounded-2xl shadow-lg mb-4 flex-1 flex flex-col justify-between transition-colors duration-500">
                 <div>
-                    <h2 id="questionText"
-                        class="text-lg md:text-xl font-bold text-primary dark:text-slate-100 mb-4">
+                    <h2 id="questionText" class="text-lg md:text-xl font-bold text-primary dark:text-slate-100 mb-4">
                         Question Text
                     </h2>
                     <ul id="answerOptions" class="space-y-2"></ul>
                 </div>
 
-               <div class="flex flex-col sm:flex-row justify-between mt-6 space-y-2 sm:space-y-0">
-    <div class="flex flex-wrap gap-2 flex-1">
-        <button id="prevBtn"
-            class="flex-1 sm:flex-auto py-2 px-4 bg-accent dark:bg-slate-700/70 backdrop-blur-xl rounded-xl hover:opacity-90 transition font-semibold min-w-[100px]">
-            Previous
-        </button>
-        <button id="nextBtn"
-            class="flex-1 sm:flex-auto py-2 px-4 bg-accent dark:bg-slate-700/70 backdrop-blur-xl rounded-xl hover:opacity-90 transition font-semibold min-w-[100px]">
-            Next
-        </button>
-        <button id="markBtn"
-            class="flex-1 sm:flex-auto py-2 px-4 bg-yellow-400 rounded-xl hover:bg-yellow-500 transition font-semibold min-w-[120px]">
-            Mark for Review
-        </button>
-    </div>
-    <button id="submitBtn"
-        class="mt-2 sm:mt-0 py-2 px-6 bg-primary text-white rounded-xl font-semibold hover:opacity-90 transition">
-        Submit
-    </button>
-</div>
+                <div
+                    class="flex flex-col sm:flex-row sm:items-center justify-between mt-6 space-y-2 sm:space-y-0 sm:space-x-2">
+                    <div class="flex flex-wrap gap-2 sm:gap-2">
+                        <button id="prevBtn"
+                            class="py-2 px-4 bg-accent dark:bg-slate-700/70 backdrop-blur-xl rounded-xl hover:opacity-90 transition font-semibold">Previous</button>
+                        <button id="nextBtn"
+                            class="py-2 px-4 bg-accent dark:bg-slate-700/70 backdrop-blur-xl rounded-xl hover:opacity-90 transition font-semibold">Next</button>
+                        <button id="markBtn"
+                            class="py-2 px-4 bg-yellow-400 rounded-xl hover:bg-yellow-500 transition font-semibold">Mark
+                            for Review</button>
+                    </div>
+                    <button id="submitBtn"
+                        class="py-2 px-6 bg-primary text-white rounded-xl font-semibold hover:opacity-90 transition mt-2 sm:mt-0">Submit</button>
+                </div>
             </div>
         </main>
     </div>
@@ -208,31 +203,31 @@
         document.addEventListener("DOMContentLoaded", () => {
 
 
-             // Particle background
-        const getParticleCount = () => window.innerWidth < 768 ? 15 : 40;
+            // Particle background
+            const getParticleCount = () => window.innerWidth < 768 ? 15 : 40;
 
-        let particleInstance;
+            let particleInstance;
 
-        tsParticles.load("tsparticles", {
-            particles: {
-                number: { value: getParticleCount() },
-                color: { value: "#7C3AED" },
-                links: { enable: true, color: "#7C3AED", opacity: 0.2 },
-                move: { enable: true, speed: 0.5 },
-                size: { value: 2 }
-            }
-        }).then(container => {
-            particleInstance = container;
-        });
+            tsParticles.load("tsparticles", {
+                particles: {
+                    number: { value: getParticleCount() },
+                    color: { value: "#7C3AED" },
+                    links: { enable: true, color: "#7C3AED", opacity: 0.2 },
+                    move: { enable: true, speed: 0.5 },
+                    size: { value: 2 }
+                }
+            }).then(container => {
+                particleInstance = container;
+            });
 
-        // Update particles on resize
-        window.addEventListener("resize", () => {
-            if (!particleInstance) return;
+            // Update particles on resize
+            window.addEventListener("resize", () => {
+                if (!particleInstance) return;
 
-            const newCount = getParticleCount();
-            particleInstance.options.particles.number.value = newCount;
-            particleInstance.refresh();
-        });
+                const newCount = getParticleCount();
+                particleInstance.options.particles.number.value = newCount;
+                particleInstance.refresh();
+            });
 
             // ===== Route Guard =====
             const currentUser = JSON.parse(localStorage.getItem("currentUser"));
@@ -322,8 +317,8 @@
 
 
                 q.answers.forEach((a, i) => {
-    const li = document.createElement("li");
-    li.innerHTML = `
+                    const li = document.createElement("li");
+                    li.innerHTML = `
     <label class="
         flex items-center p-4 rounded-xl cursor-pointer
         border border-gray-300 dark:border-slate-700
@@ -339,11 +334,11 @@
                      peer-checked:border-primary peer-checked:bg-primary transition-all duration-300"></span>
     </label>
     `;
-    answerOptions.appendChild(li);
-});
+                    answerOptions.appendChild(li);
+                });
 
-            
-                  
+
+
 
                 // ===== Update Mark Button =====
                 const markBtn = document.getElementById("markBtn");
